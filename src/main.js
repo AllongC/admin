@@ -1,6 +1,20 @@
 import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
+import ElementUI from 'element-ui';
+import 'element-ui/lib/theme-chalk/index.css';
+import axios from 'axios'
+axios.defaults.baseURL = 'http://127.0.0.1:3000'
+Vue.prototype.$axios = axios
+router.beforeEach((to, from, next) => {
+  if (to.path !== '/login' && !localStorage.getItem('token')) {
+    return router.push('/login')
+  } else {
+    return next()
+  }
+})
+Vue.use(ElementUI);
+
 
 Vue.config.productionTip = false
 
