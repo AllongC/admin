@@ -32,6 +32,10 @@ export default {
   },
   methods: {
     login() {
+      if (!this.form.username || !this.form.password) {
+        this.$message.error("请输入完整的信息");
+        return;
+      }
       this.$axios({
         url: "/login",
         method: "post",
