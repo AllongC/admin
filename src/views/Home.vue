@@ -30,6 +30,7 @@
           <p>退出</p>
         </el-header>
         <el-main>
+          <breadcrumb />
           <router-view></router-view>
         </el-main>
       </el-container>
@@ -38,7 +39,11 @@
 </template>
 
 <script>
+import breadcrumb from "@/components/breadcrumb";
 export default {
+  components: {
+    breadcrumb
+  },
   data() {
     return {
       userInfo: {}

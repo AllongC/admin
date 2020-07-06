@@ -12,16 +12,25 @@ const routes = [
     path: '/',
     name: 'Home',
     component: Home,
+    meta: {
+      name: '主页'
+    },
     children: [
       {
         path: 'post',
         name: 'PostListPage',
-        component: PostList
+        component: PostList,
+        meta: {
+          name: '文章列表'
+        },
       },
       {
         path: 'publish',
         name: 'PublishPostPage',
-        component: PublishPost
+        component: PublishPost,
+        meta: {
+          name: '文章发布',
+        },
       },
     ]
   },
