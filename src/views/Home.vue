@@ -5,7 +5,7 @@
         <el-col :span="12">
           <h5>黑马头条</h5>
           <el-menu
-            default-active="2"
+            :default-active="$route.path"
             class="el-menu-vertical-demo"
             @open="handleOpen"
             @close="handleClose"
@@ -13,17 +13,11 @@
             text-color="#fff"
             active-text-color="#ffd04b"
           >
-            <el-submenu index="1">
-              <template slot="title">
-                <span>导航一</span>
-              </template>
-              <el-menu-item-group>
-                <el-menu-item index="1-1">选项1</el-menu-item>
-                <el-menu-item index="1-2">选项2</el-menu-item>
-              </el-menu-item-group>
-            </el-submenu>
-            <el-menu-item index="4">
-              <span slot="title">导航四</span>
+            <el-menu-item index="/post" @click="nextStation('/post')">
+              <span slot="title">文章列表</span>
+            </el-menu-item>
+            <el-menu-item index="/publish" @click="nextStation('/publish')">
+              <span slot="title">发布文章</span>
             </el-menu-item>
           </el-menu>
         </el-col>
@@ -35,7 +29,9 @@
           <p>{{userInfo.nickname}}</p>
           <p>退出</p>
         </el-header>
-        <el-main>Main</el-main>
+        <el-main>
+          <router-view></router-view>
+        </el-main>
       </el-container>
     </el-container>
   </div>
@@ -54,6 +50,11 @@ export default {
     },
     handleClose(key, keyPath) {
       console.log(key, keyPath);
+    },
+    nextStation(val) {
+      if (this.$route.path !== val) {
+        this.$router.push(val);
+      }
     }
   },
   mounted() {
@@ -103,13 +104,6 @@ export default {
   color: white;
   text-align: center;
   line-height: 200px;
-}
-
-.el-main {
-  background-color: #e9eef3;
-  color: #333;
-  text-align: center;
-  line-height: 160px;
 }
 
 body > .el-container {
