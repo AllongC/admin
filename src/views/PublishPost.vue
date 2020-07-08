@@ -112,14 +112,11 @@ export default {
       });
     },
     success(response, file, fileList) {
-      this.form.cover = fileList.map(item => {
-        return { id: item.response.data.id };
-      });
+      file.id = response.data.id;
+      this.form.cover.push(file);
     },
     remove(file, fileList) {
-      this.form.cover = fileList.map(item => {
-        return { id: item.response.data.id };
-      });
+      this.form.cover = fileList;
     },
     ImageUpload(file, Editor, cursorLocation, resetUploader) {
       const data = new FormData();
