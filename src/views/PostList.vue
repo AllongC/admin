@@ -22,7 +22,7 @@
       <el-table-column prop="title" label="标题" align="center"></el-table-column>
       <el-table-column label="封面" align="center" width="210">
         <template slot-scope="scope">
-          <img :src="scope.row.cover[0].url" alt />
+          <img :src="scope.row.cover[0].url|addURL" alt />
         </template>
       </el-table-column>
       <el-table-column prop="user.nickname" label="姓名" width="180" align="center"></el-table-column>

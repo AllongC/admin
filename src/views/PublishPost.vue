@@ -5,14 +5,16 @@
         <el-input v-model="form.title"></el-input>
       </el-form-item>
       <el-form-item label="内容">
-        <vue-editor v-model="form.content"></vue-editor>
+        <vue-editor v-model="form.content" :useCustomImageHandler="true" @image-added="ImageUpload"></vue-editor>
       </el-form-item>
       <el-form-item label="栏目">
-        <el-checkbox-group v-model="form.categpries">
-          <el-checkbox label="美食/餐厅线上活动" name="type"></el-checkbox>
-          <el-checkbox label="地推活动" name="type"></el-checkbox>
-          <el-checkbox label="线下主题活动" name="type"></el-checkbox>
-          <el-checkbox label="单纯品牌曝光" name="type"></el-checkbox>
+        <el-checkbox-group v-model="categpries">
+          <el-checkbox
+            v-for="item in column "
+            :key="item.id"
+            :label="item.id"
+            name="type"
+          >{{item.name}}</el-checkbox>
         </el-checkbox-group>
       </el-form-item>
       <el-form-item label="封面">
@@ -21,14 +23,15 @@
           :headers="{Authorization:'Bearer ' +token}"
           list-type="picture-card"
           :on-success="success"
+          :on-remove="remove"
         >
           <i class="el-icon-plus"></i>
         </el-upload>
       </el-form-item>
       <el-form-item label="类型">
         <el-radio-group v-model="form.type">
-          <el-radio label="文章"></el-radio>
-          <el-radio label="视频"></el-radio>
+          <el-radio label="1">文章</el-radio>
+          <el-radio label="2">视频</el-radio>
         </el-radio-group>
       </el-form-item>
       <el-form-item>
@@ -50,18 +53,68 @@ export default {
       token: localStorage.getItem("token"),
       form: {
         title: "",
-        categpries: [],
+        categories: [],
         content: "",
+        cover: [],
         type: ""
-      }
+      },
+      column: [],
+      categpries: []
     };
+  },
+  watch: {
+    categpries() {
+      this.form.categories = this.categpries.map(item => {
+        return { id: item };
+      });
+    }
+  },
+  mounted() {
+    this.$axios({
+      url: "/category",
+      method: "get"
+    }).then(res => {
+      this.column = res.data.data.filter(item => {
+        return item.id != 0 && item.id != 999;
+      });
+    });
   },
   methods: {
     onSubmit() {
-      console.log("submit!");
+      this.$axios({
+        url: "/post",
+        method: "post",
+        data: this.form
+      }).then(res => {
+        console.log(res);
+      });
     },
     success(response, file, fileList) {
-      console.log(response, file, fileList);
+      this.form.cover = fileList.map(item => {
+        return { id: item.response.data.id };
+      });
+    },
+    remove(file, fileList) {
+      this.form.cover = fileList.map(item => {
+        return { id: item.response.data.id };
+      });
+    },
+    ImageUpload(file, Editor, cursorLocation, resetUploader) {
+      const data = new FormData();
+      data.append("file", file);
+      this.$axios({
+        url: "/upload",
+        method: "post",
+        data: data
+      }).then(res => {
+        const { url } = res.data.data;
+        Editor.insertEmbed(
+          cursorLocation,
+          "image",
+          this.$axios.defaults.baseURL + url
+        );
+        resetUploader();
+      });
     }
   }
 };
@@ -69,16 +122,5 @@ export default {
 <style lang="less" scoped>
 .el-input {
   width: 400px;
-}
-.el-checkbox-group {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  align-items: center;
-  width: 800px;
-  .el-checkbox {
-    width: 300px;
-    margin: 0px;
-  }
 }
 </style>
