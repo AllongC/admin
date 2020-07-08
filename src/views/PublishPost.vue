@@ -24,14 +24,15 @@
           list-type="picture-card"
           :on-success="success"
           :on-remove="remove"
+          :file-list="form.cover"
         >
           <i class="el-icon-plus"></i>
         </el-upload>
       </el-form-item>
       <el-form-item label="类型">
         <el-radio-group v-model="form.type">
-          <el-radio label="1">文章</el-radio>
-          <el-radio label="2">视频</el-radio>
+          <el-radio :label="1">文章</el-radio>
+          <el-radio :label="2">视频</el-radio>
         </el-radio-group>
       </el-form-item>
       <el-form-item>
@@ -78,6 +79,27 @@ export default {
         return item.id != 0 && item.id != 999;
       });
     });
+    if (this.$route.query.id) {
+      this.$axios({
+        url: "/post/" + this.$route.query.id
+      }).then(res => {
+        const { data } = res.data;
+        const img = data.cover.map(item => {
+          const img = { ...item };
+          if (img.url.indexOf("http") == -1) {
+            img.url = this.$axios.defaults.baseURL + item.url;
+            return img;
+          }
+        });
+        data.cover = img;
+        this.categpries = data.categories.map(item => {
+          return item.id;
+        });
+        data.content = data.content.replace(/div/g, "p");
+        this.form = data;
+        console.log(this.form);
+      });
+    }
   },
   methods: {
     onSubmit() {
